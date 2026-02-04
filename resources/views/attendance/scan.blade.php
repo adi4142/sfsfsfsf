@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Kehadiran</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #49acf3ff;
+            --primary-dark: #2470daff;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-color: #1F2937;
+            --text-light: #6B7280;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .scan-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            padding: 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* User Info */
+        .user-info {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            padding: 16px 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .user-details {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .user-nip, .user-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Camera Section */
+        .camera-section {
+            padding: 24px;
+        }
+
+        .camera-container {
+            position: relative;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            margin-bottom: 24px;
+        }
+
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 16px;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .camera-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .camera-corners {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--primary-color);
+        }
+
+        .corner.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 8px 0 0 0;
+        }
+
+        .corner.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 8px 0 0;
+        }
+
+        .corner.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+            border-radius: 0 0 0 8px;
+        }
+
+        .corner.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Photo Preview */
+        .photo-preview {
+            width: 100%;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Status Info */
+        .status-info-box {
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .status-text {
+            flex: 1;
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 2px;
+        }
+
+        .status-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* Button */
+        .btn-scan {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-scan.check-in {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+        }
+
+        .btn-scan.check-out {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #DC2626 100%);
+        }
+
+        .btn-scan:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-scan:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-scan:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-scan i {
+            font-size: 20px;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #D1FAE5;
+            color: #065F46;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-danger {
+            background: #FEE2E2;
+            color: #991B1B;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-info {
+            background: #DBEAFE;
+            color: #1E40AF;
+            border-left: 4px solid #3B82F6;
+        }
+
+        .alert i {
+            font-size: 18px;
+        }
+
+        /* Completed State */
+        .completed-container {
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .completed-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 40px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .completed-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .completed-subtext {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 24px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 12px 32px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(73, 172, 243, 0.4);
+        }
+
+        /* Instruction */
+        .instruction {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .instruction i {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="scan-container">
+    <!-- Header -->
+    <div class="header">
+        <a href="{{ route('attendance.index') }}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-title">Absensi Kehadiran</div>
+        <div class="header-subtitle">Scan wajah Anda untuk absensi</div>
+    </div>
+
+    <!-- User Info -->
+    <div class="user-info">
+        <div class="user-name">{{ $employee->name }}</div>
+        <div class="user-details">
+            <div class="user-nip">
+                <i class="fas fa-id-card"></i>
+                <span>{{ $employee->nip }}</span>
+            </div>
+            <div class="user-date">
+                <i class="far fa-calendar-alt"></i>
+                <span>{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+            </div>
+        </div>
+    </div>
+
+    @if(!$attendance || !$attendance->time_out)
+    <!-- Camera Section -->
+    <div class="camera-section">
+        <div class="instruction">
+            <i class="fas fa-info-circle"></i>
+            <span>Posisikan wajah Anda di dalam frame</span>
+        </div>
+
+        <div id="camera_container" class="camera-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas"></canvas>
+            <div class="camera-overlay">
+                <div class="camera-frame"></div>
+                <div class="camera-corners">
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result_container" class="hidden">
+            <img id="photo_preview" src="" class="photo-preview">
+        </div>
+
+        <!-- Status Info -->
+        @if(!$attendance)
+        <div class="status-info-box">
+            <div class="status-icon">
+                <i class="fas fa-sign-in-alt"></i>
+            </div>
+            <div class="status-text">
+                <div class="status-label">Status Absensi</div>
+                <div class="status-value">Belum Absen Masuk</div>
+            </div>
+        </div>
+
+        <button id="btn-absen" class="btn-scan check-in">
+            <i class="fas fa-fingerprint"></i>
+            <span>Absen Masuk</span>
+        </button>
+        @elseif(!$attendance->time_out)
+        <div class="status-info-box">
+            <div class="status-icon" style="background: var(--success-color);">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="status-text">
+                <div class="status-label">Masuk: {{ \Carbon\Carbon::parse($attendance->time_in)->format('H:i') }}</div>
+                <div class="status-value">Belum Absen Keluar</div>
+            </div>
+        </div>
+
+        <button id="btn-absen" class="btn-scan check-out">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Absen Keluar</span>
+        </button>
+        @endif
+
+        <div id="status_message"></div>
+    </div>
+    @else
+    <!-- Completed State -->
+    <div class="completed-container">
+        <div class="completed-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="completed-text">Absensi Selesai!</div>
+        <div class="completed-subtext">Anda sudah menyelesaikan absensi hari ini</div>
+        <a href="{{ route('attendance.index') }}" class="btn-back">Kembali ke Dashboard</a>
+    </div>
+    @endif
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const btnAbsen = document.getElementById('btn-absen');
+    const photoPreview = document.getElementById('photo_preview');
+    const cameraContainer = document.getElementById('camera_container');
+    const resultContainer = document.getElementById('result_container');
+    const statusMessage = document.getElementById('status_message');
+
+    // Access webcam
+    if (video) {
+        navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: 'user',
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            } 
+        })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(err => {
+            console.error("Error accessing camera: ", err);
+            statusMessage.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Kamera tidak dapat diakses. Pastikan izin kamera diberikan.</span>
+                </div>`;
+        });
+    }
+
+    if (btnAbsen) {
+        btnAbsen.addEventListener('click', function() {
+            // Disable button
+            btnAbsen.disabled = true;
+            const originalHTML = btnAbsen.innerHTML;
+            btnAbsen.innerHTML = '<div class="spinner"></div><span>Memproses...</span>';
+
+            // Capture photo
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = canvas.toDataURL('image/png');
+
+            // Show preview
+            photoPreview.src = imageData;
+            cameraContainer.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+
+            // Send to server
+            fetch('{{ route("attendance.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    image: imageData,
+                    nip: '{{ $employee->nip }}'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusMessage.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <span>${data.success}</span>
+                        </div>`;
+                    setTimeout(() => {
+                        window.location.href = '{{ route("attendance.index") }}';
+                    }, 2000);
+                } else {
+                    statusMessage.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>${data.error || 'Terjadi kesalahan.'}</span>
+                        </div>`;
+                    btnAbsen.disabled = false;
+                    btnAbsen.innerHTML = originalHTML;
+                    cameraContainer.classList.remove('hidden');
+                    resultContainer.classList.add('hidden');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusMessage.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Gagal menghubungi server.</span>
+                    </div>`;
+                btnAbsen.disabled = false;
+                btnAbsen.innerHTML = originalHTML;
+                cameraContainer.classList.remove('hidden');
+                resultContainer.classList.add('hidden');
+            });
+        });
+    }
+</script>
+
+</body>
+</html>

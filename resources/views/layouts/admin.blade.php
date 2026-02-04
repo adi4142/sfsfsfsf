@@ -59,16 +59,14 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
-      @auth
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
           <img src="{{ asset('AdminLTE/dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+          <a href="#" class="d-block">{{ Auth::user()->name ?? 'Guest' }}</a>
         </div>
       </div>
-      @endauth
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">
@@ -147,7 +145,7 @@
           </li>
           <li class="nav-item">
             <a href="{{ route('position.index') }}" class="nav-link {{ request()->is('position*') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-id-card"></i>
+              <i class="nav-icon fas fa-user-tag"></i>
               <p>Jabatan</p>
             </a>
           </li>
@@ -159,7 +157,7 @@
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper text-sm">
+  <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <div class="content-header">
       <div class="container-fluid">
