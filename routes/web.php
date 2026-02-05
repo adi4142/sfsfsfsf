@@ -43,9 +43,7 @@ Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->na
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::middleware(['auth', 'role.access'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('welcome'); // Or your dashboard view
-    })->name('dashboard');
+    Route::get('/dashboard', [AttendanceController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/role', [RoleController::class, 'index'])->name('role.index');
     Route::get('/role/create', [RoleController::class, 'create'])->name('role.create');
@@ -134,6 +132,7 @@ Route::middleware(['auth', 'role.access'])->group(function () {
     Route::delete('/selectionapplicant/{id}', [SelectionApplicantController::class, 'destroy'])->name('selectionapplicant.destroy');
 
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/detail', [AttendanceController::class, 'absensi'])->name('attendance.detail');
     Route::get('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
     Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
     Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');

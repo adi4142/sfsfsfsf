@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function dashboard()
     {
         $user = Auth::user();
         
@@ -79,9 +79,56 @@ class AttendanceController extends Controller
             ));
         }
 
-        // Default Admin/HRD View
-        $attendances = Attendance::with('employee')->orderBy('date', 'desc')->orderBy('time_in', 'desc')->get();
+        // Default Dashboard for Admin/Other
+        return view('welcome');
+    }
+
+    public function index()
+    {
+        $user = Auth::user();
+
+        if ($user && $user->role && strtolower($user->role->name) === 'karyawan') {
+             // For Karyawan, show their OWN attendance history in the index view
+             $employee = Employee::where('user_id', $user->user_id)->first();
+             if ($employee) {
+                 $attendances = Attendance::with('employee')
+                    ->where('employee_nip', $employee->nip)
+                    ->orderBy('date', 'desc')
+                    ->orderBy('time_in', 'desc')
+                    ->get();
+             } else {
+                 $attendances = collect(); // Empty collection if no employee data
+             }
+        } else {
+             // Default Admin/HRD View (Show All)
+             $attendances = Attendance::with('employee')->orderBy('date', 'desc')->orderBy('time_in', 'desc')->get();
+        }
+
         return view('attendance.index', compact('attendances'));
+    }
+
+    public function absensi()
+    {
+        $user = Auth::user();
+
+        if ($user && $user->role && strtolower($user->role->name) === 'karyawan') {
+             // For Karyawan, show their OWN attendance history in the index view
+             $employee = Employee::where('user_id', $user->user_id)->first();
+             if ($employee) {
+                 $attendances = Attendance::with('employee')
+                    ->where('employee_nip', $employee->nip)
+                    ->orderBy('date', 'desc')
+                    ->orderBy('time_in', 'desc')
+                    ->get();
+             } else {
+                 $attendances = collect(); // Empty collection if no employee data
+             }
+        } else {
+             // Default Admin/HRD View (Show All)
+             $attendances = Attendance::with('employee')->orderBy('date', 'desc')->orderBy('time_in', 'desc')->get();
+        }
+
+        return view('attendance.employee_absensi', compact('attendances'));
     }
 
     public function scan()
