@@ -7,7 +7,7 @@ use App\User;
 use App\Departement;
 use App\Division;
 use App\Position;
-
+use App\Attendance;
 
 class Employee extends Model
 {
@@ -47,4 +47,5 @@ class Employee extends Model
     public function attendances(){
         return $this->hasMany(Attendance::class, 'employee_nip', 'nip');
     }
+
 }

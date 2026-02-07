@@ -48,7 +48,7 @@ class RoleAccess
         if ($role === 'karyawan') {
              // Check if route name starts with 'attendance.'
              // Check if route name starts with 'attendance.' or is 'dashboard'
-             if ($routeName && (strpos($routeName, 'attendance.') === 0 || $routeName === 'dashboard' || $routeName === 'payroll.index')) {
+             if ($routeName && (strpos($routeName, 'attendance.') === 0 || $routeName === 'dashboard' || $routeName === 'payroll.index' || $routeName === 'profile.index')) {
                  return $next($request);
              }
              return abort(403, 'Karyawan hanya memiliki akses ke menu Absensi.');

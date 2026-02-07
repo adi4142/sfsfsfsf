@@ -25,7 +25,7 @@
             <div class="icon">
                 <i class="far fa-clock"></i>
             </div>
-            <a href="{{ route('attendance.index') }}" class="small-box-footer">Lihat Riwayat <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('attendance.history') }}" class="small-box-footer">Lihat Riwayat <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
@@ -37,7 +37,7 @@
             <div class="icon">
                 <i class="fas fa-clipboard-list"></i>
             </div>
-             <a href="{{ route('attendance.index') }}" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+             <a href="{{ route('attendance.history') }}" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
@@ -49,7 +49,7 @@
             <div class="icon">
                 <i class="far fa-calendar-alt"></i>
             </div>
-             <a href="#" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+             <a href="{{ route('attendance.history') }}" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-3 col-6">
@@ -61,7 +61,7 @@
             <div class="icon">
                 <i class="fas fa-times-circle"></i>
             </div>
-             <a href="#" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+             <a href="{{ route('attendance.history') }}" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
@@ -127,7 +127,7 @@
             <div class="card-header">
                 <h3 class="card-title">Riwayat Terakhir</h3>
                 <div class="card-tools">
-                    <a href="{{ route('attendance.index') }}" class="btn btn-tool btn-sm">Lihat Semua</a>
+                    <a href="{{ route('attendance.history') }}" class="btn btn-tool btn-sm">Lihat Semua</a>
                 </div>
             </div>
             <div class="card-body p-0">

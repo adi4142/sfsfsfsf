@@ -17,6 +17,7 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,9 +137,13 @@ Route::middleware(['auth', 'role.access'])->group(function () {
     Route::get('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
     Route::post('/attendance/store', [AttendanceController::class, 'store'])->name('attendance.store');
     Route::get('/attendance/history', [AttendanceController::class, 'history'])->name('attendance.history');
+    Route::get('/attendance/dashboard', [AttendanceController::class, 'dashboard'])->name('attendance.dashboard');
 
     Route::get('/jobapplication', [JobApplicationController::class, 'index'])->name('jobapplication.index');
     Route::put('/jobapplication/{id}', [JobApplicationController::class, 'update'])->name('jobapplication.update');
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 

@@ -110,6 +110,8 @@ class AttendanceController extends Controller
     public function absensi()
     {
         $user = Auth::user();
+        $today = Carbon::today()->toDateString();
+        $now = Carbon::now()->toTimeString();
 
         if ($user && $user->role && strtolower($user->role->name) === 'karyawan') {
              // For Karyawan, show their OWN attendance history in the index view
@@ -128,7 +130,14 @@ class AttendanceController extends Controller
              $attendances = Attendance::with('employee')->orderBy('date', 'desc')->orderBy('time_in', 'desc')->get();
         }
 
-        return view('attendance.employee_absensi', compact('attendances'));
+        $today = Carbon::today()->toDateString();
+        $todayAttendance = Attendance::where('employee_nip', $employee->nip)
+            ->where('date', $today)
+            ->first();
+        $attendance = Attendance::where('employee_nip', $employee->nip)
+            ->where('date', $today)
+            ->first();
+        return view('attendance.employee_absensi', compact('attendances', 'todayAttendance', 'today', 'attendance'));
     }
 
     public function scan()
@@ -208,6 +217,13 @@ class AttendanceController extends Controller
             // Check-out
             if ($attendance->time_out) {
                 return response()->json(['error' => 'Anda sudah absen keluar hari ini.']);
+            }
+
+            if (Carbon::now()->format('H:i') < '16:00') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Absen keluar hanya bisa dilakukan setelah jam 16.00'
+                ], 403);
             }
 
             $attendance->update([

@@ -463,7 +463,7 @@
 <div class="scan-container">
     <!-- Header -->
     <div class="header">
-        <a href="{{ route('attendance.index') }}" class="back-button">
+        <a href="{{ route('attendance.detail') }}" class="back-button">
             <i class="fas fa-arrow-left"></i>
         </a>
         <div class="header-title">Absensi Kehadiran</div>
@@ -611,6 +611,8 @@
             resultContainer.classList.remove('hidden');
 
             // Send to server
+            btnAbsen.disabled = true;
+
             fetch('{{ route("attendance.store") }}', {
                 method: 'POST',
                 headers: {
@@ -624,41 +626,30 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    statusMessage.innerHTML = `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            <span>${data.success}</span>
-                        </div>`;
-                    setTimeout(() => {
-                        window.location.href = '{{ route("attendance.index") }}';
-                    }, 2000);
-                } else {
-                    statusMessage.innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <span>${data.error || 'Terjadi kesalahan.'}</span>
-                        </div>`;
-                    btnAbsen.disabled = false;
-                    btnAbsen.innerHTML = originalHTML;
-                    cameraContainer.classList.remove('hidden');
-                    resultContainer.classList.add('hidden');
-                }
+                statusMessage.innerHTML = `
+                    <div class="alert alert-${data.message.includes('Berhasil') ? 'success' : 'danger'}">
+                        ${data.message}
+                    </div>
+                `;
             })
             .catch(error => {
-                console.error('Error:', error);
                 statusMessage.innerHTML = `
                     <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span>Gagal menghubungi server.</span>
+                        Terjadi kesalahan
                     </div>`;
+            })
+            .finally(() => {
+                // 🔥 INI KUNCI UTAMA
                 btnAbsen.disabled = false;
-                btnAbsen.innerHTML = originalHTML;
-                cameraContainer.classList.remove('hidden');
-                resultContainer.classList.add('hidden');
             });
-        });
-    }
+
+            btnAbsen.disabled = false;
+            btnAbsen.innerHTML = originalHTML;
+            cameraContainer.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+        }
+    );
+}
 </script>
 
 </body>

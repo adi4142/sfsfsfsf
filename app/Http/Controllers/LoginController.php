@@ -29,7 +29,7 @@ class LoginController extends Controller
             if ($role === 'admin' || $role === 'hrd') {
                 return redirect()->intended(route('dashboard'));
             } elseif ($role === 'karyawan') {
-                return redirect()->route('attendance.index');
+                return redirect()->route('attendance.dashboard');
             } elseif ($role === 'tamu') {
                 return redirect()->route('applicant.dashboard');
             }
